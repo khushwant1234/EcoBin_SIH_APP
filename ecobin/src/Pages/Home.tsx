@@ -87,6 +87,14 @@ const Home = () => {
             <div className="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-8">
               <p className="font-semibold">✅ You are logged in!</p>
               <p className="text-sm">You can now access all EcoBin features.</p>
+              <div className="mt-3">
+                <button
+                  onClick={() => navigate("/household/dashboard")}
+                  className="bg-[#062f2e] text-white px-4 py-2 rounded-lg hover:bg-[#083d3c] transition-colors duration-200 text-sm font-medium"
+                >
+                  Go to Dashboard →
+                </button>
+              </div>
             </div>
           )}
 
