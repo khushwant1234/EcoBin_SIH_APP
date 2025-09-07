@@ -73,6 +73,7 @@ binSchema.statics.hasDataChanged = async function(newData) {
     photo: newData.photo !== undefined && currentData.photo !== newData.photo
   };
   
+
   const hasChanged = Object.values(changes).some(changed => changed);
   
   return {

@@ -9,6 +9,12 @@ const geminiResponseSchema = new mongoose.Schema({
     type: Number,
     required: true
   },
+  category: {
+    type: String,
+    enum: ['organic', 'hazardous', 'recyclable'],
+    required: true,
+    index: true
+  },
   photoHash: {
     type: String,
     required: true,
@@ -48,10 +54,11 @@ geminiResponseSchema.index({ createdAt: -1 });
 geminiResponseSchema.index({ photoHash: 1, createdAt: -1 });
 
 // Static method to save a new analysis
-geminiResponseSchema.statics.saveAnalysis = async function(analysisData, photoHash, binCounts, rawResponse) {
+geminiResponseSchema.statics.saveAnalysis = async function(analysisData, photoHash, binCounts, rawResponse, category) {
   const newAnalysis = new this({
     item: analysisData.item,
     weight_in_grams: analysisData.weight_in_grams,
+    category: category,
     photoHash: photoHash,
     binCounts: binCounts,
     rawResponse: rawResponse,
@@ -62,10 +69,11 @@ geminiResponseSchema.statics.saveAnalysis = async function(analysisData, photoHa
 };
 
 // Static method to save a failed analysis
-geminiResponseSchema.statics.saveFailedAnalysis = async function(photoHash, binCounts, errorMessage, rawResponse = null) {
+geminiResponseSchema.statics.saveFailedAnalysis = async function(photoHash, binCounts, errorMessage, category, rawResponse = null) {
   const failedAnalysis = new this({
     item: 'analysis_failed',
     weight_in_grams: 0,
+    category: category,
     photoHash: photoHash,
     binCounts: binCounts,
     rawResponse: rawResponse,

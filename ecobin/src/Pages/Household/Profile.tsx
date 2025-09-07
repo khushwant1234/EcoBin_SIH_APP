@@ -1,6 +1,13 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { Card, CardContent, CardHeader, CardTitle } from "@/Components/ui/card";
+import { Button } from "@/Components/ui/button";
+import { Input } from "@/Components/ui/input";
+import { Label } from "@/Components/ui/label";
 
 const HouseholdProfile = () => {
+  const navigate = useNavigate();
+
   const [userInfo, setUserInfo] = useState({
     name: "Sarah Johnson",
     email: "sarah.johnson@email.com",
@@ -59,234 +66,269 @@ const HouseholdProfile = () => {
   return (
     <div className="p-6 space-y-6">
       {/* Header */}
-      <div className="bg-gradient-to-r from-[#062f2e] to-[#083d3c] rounded-xl p-6 text-white">
-        <div className="flex items-center space-x-4">
-          <div className="w-20 h-20 bg-white/20 rounded-full flex items-center justify-center">
-            <svg
-              className="w-10 h-10 text-white"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
-              />
-            </svg>
+      <Card className="bg-gradient-to-r from-[#062f2e] to-[#083d3c] text-white border-0">
+        <CardContent className="p-6">
+          <div className="flex items-center space-x-4">
+            <div className="w-20 h-20 bg-white/20 rounded-full flex items-center justify-center">
+              <svg
+                className="w-10 h-10 text-white"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
+                />
+              </svg>
+            </div>
+            <div>
+              <h1 className="text-2xl font-bold">{userInfo.name}</h1>
+              <p className="text-white/80">
+                {stats.rank} • Level {stats.level}
+              </p>
+              <p className="text-white/60 text-sm">
+                Member since {userInfo.memberSince}
+              </p>
+            </div>
           </div>
-          <div>
-            <h1 className="text-2xl font-bold">{userInfo.name}</h1>
-            <p className="text-white/80">
-              {stats.rank} • Level {stats.level}
-            </p>
-            <p className="text-white/60 text-sm">
-              Member since {userInfo.memberSince}
-            </p>
-          </div>
-        </div>
-      </div>
+        </CardContent>
+      </Card>
 
       {/* Stats Grid */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <div className="bg-white rounded-lg shadow-md p-4 text-center">
-          <div className="text-2xl font-bold text-[#062f2e]">
-            {stats.totalPoints.toLocaleString()}
-          </div>
-          <div className="text-sm text-[#062f2e]/70">Total Points</div>
-        </div>
-        <div className="bg-white rounded-lg shadow-md p-4 text-center">
-          <div className="text-2xl font-bold text-[#062f2e]">
-            {stats.itemsScanned}
-          </div>
-          <div className="text-sm text-[#062f2e]/70">Items Scanned</div>
-        </div>
-        <div className="bg-white rounded-lg shadow-md p-4 text-center">
-          <div className="text-2xl font-bold text-[#062f2e]">
-            {stats.wasteRecycled}
-          </div>
-          <div className="text-sm text-[#062f2e]/70">Waste Recycled</div>
-        </div>
-        <div className="bg-white rounded-lg shadow-md p-4 text-center">
-          <div className="text-2xl font-bold text-[#062f2e]">
-            {stats.carbonSaved}
-          </div>
-          <div className="text-sm text-[#062f2e]/70">CO2 Saved</div>
-        </div>
+        <Card className="text-center">
+          <CardContent className="p-4">
+            <div className="text-2xl font-bold text-[#062f2e]">
+              {stats.totalPoints.toLocaleString()}
+            </div>
+            <div className="text-sm text-[#062f2e]/70">Total Points</div>
+          </CardContent>
+        </Card>
+        <Card className="text-center">
+          <CardContent className="p-4">
+            <div className="text-2xl font-bold text-[#062f2e]">
+              {stats.itemsScanned}
+            </div>
+            <div className="text-sm text-[#062f2e]/70">Items Scanned</div>
+          </CardContent>
+        </Card>
+        <Card className="text-center">
+          <CardContent className="p-4">
+            <div className="text-2xl font-bold text-[#062f2e]">
+              {stats.wasteRecycled}
+            </div>
+            <div className="text-sm text-[#062f2e]/70">Waste Recycled</div>
+          </CardContent>
+        </Card>
+        <Card className="text-center">
+          <CardContent className="p-4">
+            <div className="text-2xl font-bold text-[#062f2e]">
+              {stats.carbonSaved}
+            </div>
+            <div className="text-sm text-[#062f2e]/70">CO2 Saved</div>
+          </CardContent>
+        </Card>
       </div>
 
       {/* Personal Information */}
-      <div className="bg-white rounded-lg shadow-md p-6">
-        <div className="flex items-center justify-between mb-6">
-          <h3 className="text-lg font-semibold text-[#062f2e]">
-            Personal Information
-          </h3>
-          <button
-            onClick={() => (isEditing ? handleSave() : setIsEditing(true))}
-            className="px-4 py-2 bg-[#062f2e] text-white rounded-lg hover:bg-[#083d3c] transition-colors"
-          >
-            {isEditing ? "Save Changes" : "Edit Profile"}
-          </button>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div>
-            <label className="block text-sm font-medium text-[#062f2e]/70 mb-2">
-              Full Name
-            </label>
-            {isEditing ? (
-              <input
-                type="text"
-                value={userInfo.name}
-                onChange={(e) =>
-                  setUserInfo({ ...userInfo, name: e.target.value })
-                }
-                className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#062f2e] focus:border-transparent"
-              />
-            ) : (
-              <p className="p-3 bg-gray-50 rounded-lg text-[#062f2e]">
-                {userInfo.name}
-              </p>
-            )}
+      <Card>
+        <CardHeader>
+          <div className="flex items-center justify-between">
+            <CardTitle className="text-lg font-semibold text-[#062f2e]">
+              Personal Information
+            </CardTitle>
+            <Button
+              onClick={() => (isEditing ? handleSave() : setIsEditing(true))}
+              className="bg-[#062f2e] text-white hover:bg-[#083d3c]"
+            >
+              {isEditing ? "Save Changes" : "Edit Profile"}
+            </Button>
           </div>
+        </CardHeader>
+        <CardContent>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+              <Label className="text-sm font-medium text-[#062f2e]/70 mb-2">
+                Full Name
+              </Label>
+              {isEditing ? (
+                <Input
+                  type="text"
+                  value={userInfo.name}
+                  onChange={(e) =>
+                    setUserInfo({ ...userInfo, name: e.target.value })
+                  }
+                  className="focus:ring-2 focus:ring-[#062f2e] focus:border-transparent"
+                />
+              ) : (
+                <p className="p-3 bg-gray-50 rounded-lg text-[#062f2e]">
+                  {userInfo.name}
+                </p>
+              )}
+            </div>
 
-          <div>
-            <label className="block text-sm font-medium text-[#062f2e]/70 mb-2">
-              Email Address
-            </label>
-            {isEditing ? (
-              <input
-                type="email"
-                value={userInfo.email}
-                onChange={(e) =>
-                  setUserInfo({ ...userInfo, email: e.target.value })
-                }
-                className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#062f2e] focus:border-transparent"
-              />
-            ) : (
-              <p className="p-3 bg-gray-50 rounded-lg text-[#062f2e]">
-                {userInfo.email}
-              </p>
-            )}
-          </div>
+            <div>
+              <Label className="text-sm font-medium text-[#062f2e]/70 mb-2">
+                Email Address
+              </Label>
+              {isEditing ? (
+                <Input
+                  type="email"
+                  value={userInfo.email}
+                  onChange={(e) =>
+                    setUserInfo({ ...userInfo, email: e.target.value })
+                  }
+                  className="focus:ring-2 focus:ring-[#062f2e] focus:border-transparent"
+                />
+              ) : (
+                <p className="p-3 bg-gray-50 rounded-lg text-[#062f2e]">
+                  {userInfo.email}
+                </p>
+              )}
+            </div>
 
-          <div>
-            <label className="block text-sm font-medium text-[#062f2e]/70 mb-2">
-              Phone Number
-            </label>
-            {isEditing ? (
-              <input
-                type="tel"
-                value={userInfo.phone}
-                onChange={(e) =>
-                  setUserInfo({ ...userInfo, phone: e.target.value })
-                }
-                className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#062f2e] focus:border-transparent"
-              />
-            ) : (
-              <p className="p-3 bg-gray-50 rounded-lg text-[#062f2e]">
-                {userInfo.phone}
-              </p>
-            )}
-          </div>
+            <div>
+              <Label className="text-sm font-medium text-[#062f2e]/70 mb-2">
+                Phone Number
+              </Label>
+              {isEditing ? (
+                <Input
+                  type="tel"
+                  value={userInfo.phone}
+                  onChange={(e) =>
+                    setUserInfo({ ...userInfo, phone: e.target.value })
+                  }
+                  className="focus:ring-2 focus:ring-[#062f2e] focus:border-transparent"
+                />
+              ) : (
+                <p className="p-3 bg-gray-50 rounded-lg text-[#062f2e]">
+                  {userInfo.phone}
+                </p>
+              )}
+            </div>
 
-          <div>
-            <label className="block text-sm font-medium text-[#062f2e]/70 mb-2">
-              Address
-            </label>
-            {isEditing ? (
-              <input
-                type="text"
-                value={userInfo.address}
-                onChange={(e) =>
-                  setUserInfo({ ...userInfo, address: e.target.value })
-                }
-                className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#062f2e] focus:border-transparent"
-              />
-            ) : (
-              <p className="p-3 bg-gray-50 rounded-lg text-[#062f2e]">
-                {userInfo.address}
-              </p>
-            )}
+            <div>
+              <Label className="text-sm font-medium text-[#062f2e]/70 mb-2">
+                Address
+              </Label>
+              {isEditing ? (
+                <Input
+                  type="text"
+                  value={userInfo.address}
+                  onChange={(e) =>
+                    setUserInfo({ ...userInfo, address: e.target.value })
+                  }
+                  className="focus:ring-2 focus:ring-[#062f2e] focus:border-transparent"
+                />
+              ) : (
+                <p className="p-3 bg-gray-50 rounded-lg text-[#062f2e]">
+                  {userInfo.address}
+                </p>
+              )}
+            </div>
           </div>
-        </div>
-      </div>
+        </CardContent>
+      </Card>
 
       {/* Achievements */}
-      <div className="bg-white rounded-lg shadow-md p-6">
-        <h3 className="text-lg font-semibold text-[#062f2e] mb-6">
-          Achievements
-        </h3>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {achievements.map((achievement) => (
-            <div
-              key={achievement.id}
-              className="flex items-center space-x-4 p-4 bg-gradient-to-r from-yellow-50 to-orange-50 rounded-lg border border-yellow-200"
-            >
-              <div className="text-3xl">{achievement.icon}</div>
-              <div className="flex-1">
-                <h4 className="font-semibold text-[#062f2e]">
-                  {achievement.name}
-                </h4>
-                <p className="text-sm text-[#062f2e]/70 mb-1">
-                  {achievement.description}
-                </p>
-                <p className="text-xs text-[#062f2e]/50">{achievement.date}</p>
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-lg font-semibold text-[#062f2e]">
+            Achievements
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {achievements.map((achievement) => (
+              <Card
+                key={achievement.id}
+                className="bg-gradient-to-r from-yellow-50 to-orange-50 border-yellow-200"
+              >
+                <CardContent className="flex items-center space-x-4 p-4">
+                  <div className="text-3xl">{achievement.icon}</div>
+                  <div className="flex-1">
+                    <h4 className="font-semibold text-[#062f2e]">
+                      {achievement.name}
+                    </h4>
+                    <p className="text-sm text-[#062f2e]/70 mb-1">
+                      {achievement.description}
+                    </p>
+                    <p className="text-xs text-[#062f2e]/50">
+                      {achievement.date}
+                    </p>
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        </CardContent>
+      </Card>
 
       {/* Settings & Preferences */}
-      <div className="bg-white rounded-lg shadow-md p-6">
-        <h3 className="text-lg font-semibold text-[#062f2e] mb-6">
-          Settings & Preferences
-        </h3>
-        <div className="space-y-4">
-          <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
-            <div>
-              <h4 className="font-medium text-[#062f2e]">
-                Email Notifications
-              </h4>
-              <p className="text-sm text-[#062f2e]/70">
-                Receive updates about rewards and achievements
-              </p>
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-lg font-semibold text-[#062f2e]">
+            Settings & Preferences
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="space-y-4">
+            <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+              <div>
+                <h4 className="font-medium text-[#062f2e]">
+                  Email Notifications
+                </h4>
+                <p className="text-sm text-[#062f2e]/70">
+                  Receive updates about rewards and achievements
+                </p>
+              </div>
+              <label className="relative inline-flex items-center cursor-pointer">
+                <input
+                  type="checkbox"
+                  className="sr-only peer"
+                  defaultChecked
+                />
+                <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-[#062f2e]/20 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#062f2e]"></div>
+              </label>
             </div>
-            <label className="relative inline-flex items-center cursor-pointer">
-              <input type="checkbox" className="sr-only peer" defaultChecked />
-              <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-[#062f2e]/20 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#062f2e]"></div>
-            </label>
-          </div>
 
-          <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
-            <div>
-              <h4 className="font-medium text-[#062f2e]">Location Services</h4>
-              <p className="text-sm text-[#062f2e]/70">
-                Help find nearby recycling bins
-              </p>
+            <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+              <div>
+                <h4 className="font-medium text-[#062f2e]">
+                  Location Services
+                </h4>
+                <p className="text-sm text-[#062f2e]/70">
+                  Help find nearby recycling bins
+                </p>
+              </div>
+              <label className="relative inline-flex items-center cursor-pointer">
+                <input
+                  type="checkbox"
+                  className="sr-only peer"
+                  defaultChecked
+                />
+                <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-[#062f2e]/20 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#062f2e]"></div>
+              </label>
             </div>
-            <label className="relative inline-flex items-center cursor-pointer">
-              <input type="checkbox" className="sr-only peer" defaultChecked />
-              <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-[#062f2e]/20 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#062f2e]"></div>
-            </label>
-          </div>
 
-          <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
-            <div>
-              <h4 className="font-medium text-[#062f2e]">Weekly Reports</h4>
-              <p className="text-sm text-[#062f2e]/70">
-                Get weekly recycling summaries
-              </p>
+            <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+              <div>
+                <h4 className="font-medium text-[#062f2e]">Weekly Reports</h4>
+                <p className="text-sm text-[#062f2e]/70">
+                  Get weekly recycling summaries
+                </p>
+              </div>
+              <label className="relative inline-flex items-center cursor-pointer">
+                <input type="checkbox" className="sr-only peer" />
+                <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-[#062f2e]/20 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#062f2e]"></div>
+              </label>
             </div>
-            <label className="relative inline-flex items-center cursor-pointer">
-              <input type="checkbox" className="sr-only peer" />
-              <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-[#062f2e]/20 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#062f2e]"></div>
-            </label>
           </div>
-        </div>
-      </div>
+        </CardContent>
+      </Card>
 
       {/* Account Actions */}
       <div className="bg-white rounded-lg shadow-md p-6">
@@ -313,7 +355,10 @@ const HouseholdProfile = () => {
             </div>
           </button>
 
-          <button className="w-full text-left p-4 bg-gray-50 hover:bg-gray-100 rounded-lg transition-colors text-[#062f2e]">
+          <button
+            onClick={() => navigate("/household/reports")}
+            className="w-full text-left p-4 bg-gray-50 hover:bg-gray-100 rounded-lg transition-colors text-[#062f2e]"
+          >
             <div className="flex items-center space-x-3">
               <svg
                 className="w-5 h-5"
@@ -328,7 +373,7 @@ const HouseholdProfile = () => {
                   d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
                 />
               </svg>
-              <span>Export Data</span>
+              <span>View Reports</span>
             </div>
           </button>
 
