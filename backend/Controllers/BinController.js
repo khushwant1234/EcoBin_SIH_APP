@@ -1,7 +1,9 @@
 const { AsyncHandler } = require('../utils/AsyncHandler');
 const { ApiError } = require('../utils/ApiError');
 const Bin = require('../Models/binModel');
+const GeminiResponse = require('../Models/geminiResponseModel');
 const GeminiService = require('../utils/GeminiService');
+const { generatePhotoHash } = require('../utils/PhotoUtils');
 
 // Controller to handle bin data submission
 const submitBinData = AsyncHandler(async (req, res) => {
@@ -67,6 +69,36 @@ const submitBinData = AsyncHandler(async (req, res) => {
   if (photo !== undefined) binData.photo = photo;
   
   try {
+    // Check if data has actually changed before updating
+    const changeCheck = await Bin.hasDataChanged(binData);
+    
+    if (!changeCheck.hasChanged) {
+      console.log('📊 No changes detected - data is identical to stored values');
+      
+      // Get current data to return
+      const currentData = changeCheck.currentData;
+      
+      const responseData = {
+        id: currentData._id,
+        organic: currentData.organic,
+        hazardous: currentData.hazardous,
+        recyclable: currentData.recyclable,
+        photoReceived: !!currentData.photo,
+        lastUpdated: currentData.lastUpdated,
+        timestamp: new Date().toISOString(),
+        dataChanged: false,
+        analysisStatus: 'skipped_no_changes'
+      };
+      
+      return res.status(200).json({
+        success: true,
+        message: "No changes detected - data unchanged",
+        data: responseData
+      });
+    }
+    
+    console.log('🔄 Changes detected:', changeCheck.changes);
+    
     // Update/create the latest bin data (overwrites previous data)
     const savedData = await Bin.updateLatestData(binData);
     
@@ -80,41 +112,104 @@ const submitBinData = AsyncHandler(async (req, res) => {
       recyclable: savedData.recyclable,
       photoReceived: !!savedData.photo,
       lastUpdated: savedData.lastUpdated,
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
+      dataChanged: true,
+      changes: changeCheck.changes
     };
     
-    // If photo is included, automatically analyze it with Gemini AI
-    if (savedData.photo) {
-      console.log('📸 Photo detected, analyzing with Gemini AI...');
+    // If photo is included and EITHER photo OR counter data has changed, analyze with Gemini AI
+    if (savedData.photo && (changeCheck.changes.photo || changeCheck.changes.organic || changeCheck.changes.hazardous || changeCheck.changes.recyclable)) {
+      console.log('📸 Photo exists and data changed - analyzing with Gemini AI...');
+      console.log('🔍 Changes detected:', {
+        photo: changeCheck.changes.photo,
+        counters: {
+          organic: changeCheck.changes.organic,
+          hazardous: changeCheck.changes.hazardous,
+          recyclable: changeCheck.changes.recyclable
+        }
+      });
       
       try {
         const geminiService = new GeminiService();
+        const photoHash = generatePhotoHash(savedData.photo);
+        
+        console.log('🔍 Generated photo hash:', photoHash);
+        
+        // Analyze with Gemini
         const analysisResult = await geminiService.analyzeWasteItem(savedData.photo);
         
         console.log('🤖 Gemini analysis result:', analysisResult);
         
+        // Store the analysis in database
+        const savedAnalysis = await GeminiResponse.saveAnalysis(
+          analysisResult,
+          photoHash,
+          {
+            organic: savedData.organic,
+            hazardous: savedData.hazardous,
+            recyclable: savedData.recyclable
+          },
+          JSON.stringify(analysisResult) // Store raw response
+        );
+        
+        console.log('💾 Analysis saved to database with ID:', savedAnalysis._id);
+        
         // Add analysis result to response
         responseData.aiAnalysis = analysisResult;
         responseData.analysisStatus = 'completed';
+        responseData.analysisId = savedAnalysis._id;
         
       } catch (analysisError) {
         console.error('❌ Gemini analysis failed:', analysisError);
         
-        // Include fallback analysis in response
-        responseData.aiAnalysis = {
-          item: "unidentified object",
-          weight_in_grams: 50
-        };
-        responseData.analysisStatus = 'failed';
-        responseData.analysisError = analysisError.message;
+        // Save failed analysis to database
+        try {
+          const photoHash = generatePhotoHash(savedData.photo);
+          const failedAnalysis = await GeminiResponse.saveFailedAnalysis(
+            photoHash,
+            {
+              organic: savedData.organic,
+              hazardous: savedData.hazardous,
+              recyclable: savedData.recyclable
+            },
+            analysisError.message
+          );
+          
+          console.log('💾 Failed analysis saved to database with ID:', failedAnalysis._id);
+          
+          // Include fallback analysis in response
+          responseData.aiAnalysis = {
+            item: "unidentified object",
+            weight_in_grams: 50
+          };
+          responseData.analysisStatus = 'failed';
+          responseData.analysisError = analysisError.message;
+          responseData.analysisId = failedAnalysis._id;
+          
+        } catch (saveError) {
+          console.error('❌ Failed to save failed analysis:', saveError);
+          responseData.aiAnalysis = {
+            item: "unidentified object",
+            weight_in_grams: 50
+          };
+          responseData.analysisStatus = 'failed';
+          responseData.analysisError = analysisError.message;
+        }
       }
-    } else {
+    } else if (savedData.photo && !changeCheck.changes.photo && !changeCheck.changes.organic && !changeCheck.changes.hazardous && !changeCheck.changes.recyclable) {
+      console.log('📷 Photo and counter data unchanged - skipping AI analysis');
+      responseData.analysisStatus = 'skipped_no_data_changes';
+    } else if (!savedData.photo) {
+      console.log('📷 No photo provided');
       responseData.analysisStatus = 'no_photo';
+    } else {
+      console.log('📷 Photo provided but no relevant changes detected');
+      responseData.analysisStatus = 'skipped_no_relevant_changes';
     }
     
     res.status(200).json({
       success: true,
-      message: savedData.photo ? 
+      message: (savedData.photo && (changeCheck.changes.photo || changeCheck.changes.organic || changeCheck.changes.hazardous || changeCheck.changes.recyclable)) ? 
         "Bin data received, stored, and analyzed successfully" : 
         "Bin data received and stored successfully",
       data: responseData
@@ -234,9 +329,74 @@ const analyzePhoto = AsyncHandler(async (req, res) => {
   }
 });
 
+// Controller to get all Gemini analysis history
+const getAnalysisHistory = AsyncHandler(async (req, res) => {
+  try {
+    const limit = parseInt(req.query.limit) || 50;
+    const analyses = await GeminiResponse.getAllAnalyses(limit);
+    
+    res.status(200).json({
+      success: true,
+      message: `Retrieved ${analyses.length} analysis records`,
+      data: {
+        analyses: analyses,
+        total: analyses.length,
+        limit: limit
+      }
+    });
+    
+  } catch (error) {
+    console.error('❌ Error getting analysis history:', error);
+    throw new ApiError(500, "Failed to retrieve analysis history");
+  }
+});
+
+// Controller to get analysis statistics
+const getAnalysisStats = AsyncHandler(async (req, res) => {
+  try {
+    const analyses = await GeminiResponse.find({});
+    
+    // Calculate statistics
+    const stats = {
+      totalAnalyses: analyses.length,
+      successfulAnalyses: analyses.filter(a => a.analysisStatus === 'completed').length,
+      failedAnalyses: analyses.filter(a => a.analysisStatus === 'failed').length,
+      uniqueItems: [...new Set(analyses.filter(a => a.analysisStatus === 'completed').map(a => a.item))],
+      averageWeight: 0,
+      weightRange: { min: 0, max: 0 },
+      recentAnalyses: analyses.slice(0, 10).map(a => ({
+        item: a.item,
+        weight: a.weight_in_grams,
+        status: a.analysisStatus,
+        createdAt: a.createdAt
+      }))
+    };
+    
+    const successfulAnalyses = analyses.filter(a => a.analysisStatus === 'completed');
+    if (successfulAnalyses.length > 0) {
+      const weights = successfulAnalyses.map(a => a.weight_in_grams);
+      stats.averageWeight = Math.round(weights.reduce((sum, w) => sum + w, 0) / weights.length);
+      stats.weightRange.min = Math.min(...weights);
+      stats.weightRange.max = Math.max(...weights);
+    }
+    
+    res.status(200).json({
+      success: true,
+      message: "Analysis statistics retrieved successfully",
+      data: stats
+    });
+    
+  } catch (error) {
+    console.error('❌ Error getting analysis stats:', error);
+    throw new ApiError(500, "Failed to retrieve analysis statistics");
+  }
+});
+
 module.exports = {
   submitBinData,
   getLatestBinData,
   analyzeLatestPhoto,
-  analyzePhoto
+  analyzePhoto,
+  getAnalysisHistory,
+  getAnalysisStats
 };

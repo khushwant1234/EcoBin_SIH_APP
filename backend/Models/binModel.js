@@ -55,6 +55,34 @@ binSchema.statics.updateLatestData = async function(binData) {
   return result;
 };
 
+// Static method to check if data has changed
+binSchema.statics.hasDataChanged = async function(newData) {
+  const SINGLETON_ID = 'latest_bin_data';
+  
+  const currentData = await this.findById(SINGLETON_ID);
+  
+  if (!currentData) {
+    return true; // No existing data, so it's a change
+  }
+  
+  // Check if any of the provided fields are different
+  const changes = {
+    organic: newData.organic !== undefined && currentData.organic !== newData.organic,
+    hazardous: newData.hazardous !== undefined && currentData.hazardous !== newData.hazardous,
+    recyclable: newData.recyclable !== undefined && currentData.recyclable !== newData.recyclable,
+    photo: newData.photo !== undefined && currentData.photo !== newData.photo
+  };
+  
+  const hasChanged = Object.values(changes).some(changed => changed);
+  
+  return {
+    hasChanged,
+    changes,
+    currentData,
+    newData
+  };
+};
+
 // Static method to get the latest data
 binSchema.statics.getLatestData = async function() {
   const SINGLETON_ID = 'latest_bin_data';
