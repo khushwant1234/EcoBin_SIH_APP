@@ -71,7 +71,7 @@ const HouseholdDashboard = () => {
       setError(null);
       console.log(
         "Fetching bin fill levels from:",
-        `${API_BASE_URL}/bin/fill-levels`
+        `${API_BASE_URL}/api/bin/fill-levels`
       );
 
       const data = await GetApiCall(`${API_BASE_URL}/api/bin/fill-levels`);
