@@ -7,6 +7,7 @@ const User = require('../Models/userModel');
 // Controller to register a new user
 const registerUser = AsyncHandler(async (req, res) => {
   const { name, email, password, role } = req.body;
+  console.log('Registering user with data:', req.body);
 
   if (!name || !email || !password || !role) {
     throw new ApiError(400, "Name, email, password and role are required");
@@ -56,7 +57,7 @@ const registerUser = AsyncHandler(async (req, res) => {
 // Controller to log in a user
 const loginUser = AsyncHandler(async (req, res) => {
   const { email, password } = req.body;
-  
+  console.log('Logging in user with email:', email);
   if (!email || !password) {
     throw new ApiError(400, "Email and password are required");
   }

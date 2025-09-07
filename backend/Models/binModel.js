@@ -1,17 +1,21 @@
 const mongoose = require('mongoose');
 
 const binSchema = new mongoose.Schema({
-  bin1: {
+  _id: {
     type: String,
-    default: '0'
+    default: 'latest_bin_data'
   },
-  bin2: {
-    type: String, 
-    default: '0'
+  organic: {
+    type: Number,
+    default: 0
   },
-  bin3: {
-    type: String,
-    default: '0'
+  hazardous: {
+    type: Number, 
+    default: 0
+  },
+  recyclable: {
+    type: Number,
+    default: 0
   },
   photo: {
     type: String,
@@ -22,7 +26,8 @@ const binSchema = new mongoose.Schema({
     default: Date.now
   }
 }, {
-  timestamps: true
+  timestamps: true,
+  _id: false  // Disable automatic _id generation
 });
 
 // Static method to update or create the single bin record
@@ -60,9 +65,9 @@ binSchema.statics.getLatestData = async function() {
   if (!result) {
     result = await this.create({
       _id: SINGLETON_ID,
-      bin1: '0',
-      bin2: '0', 
-      bin3: '0',
+      organic: 0,
+      hazardous: 0, 
+      recyclable: 0,
       photo: null
     });
   }
