@@ -11,7 +11,8 @@ import type {
   LoginResponse,
 } from "../types/api";
 
-const backendUrl = import.meta.env.VITE_BACKEND_URL || "http://localhost:5000";
+const backendUrl =
+  import.meta.env.VITE_BACKEND_URL || "https://ecobin-sih-app.onrender.com";
 
 interface SignupForm extends Omit<RegistrationRequest, "role"> {
   role: "household" | "municipality" | "";

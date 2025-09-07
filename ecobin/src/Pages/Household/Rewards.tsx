@@ -151,16 +151,20 @@ const HouseholdRewards = () => {
             Recycle Bin Status & Rewards
           </CardTitle>
           <p className="text-[#062f2e]/70 text-sm">
-            Monitor bin fill levels and earn bonus points for helping with collection
+            Monitor bin fill levels and earn bonus points for helping with
+            collection
           </p>
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {binData.map((bin) => {
               const isNearFull = bin.fillLevel >= bin.bonusThreshold;
-              
+
               return (
-                <Card key={bin.id} className="border-2 hover:shadow-lg transition-shadow">
+                <Card
+                  key={bin.id}
+                  className="border-2 hover:shadow-lg transition-shadow"
+                >
                   <CardContent className="p-6">
                     <div className="flex items-start justify-between mb-4">
                       <div className="flex items-center space-x-3">
@@ -191,10 +195,7 @@ const HouseholdRewards = () => {
                           {bin.fillLevel}%
                         </span>
                       </div>
-                      <Progress 
-                        value={bin.fillLevel} 
-                        className="h-3"
-                      />
+                      <Progress value={bin.fillLevel} className="h-3" />
                       <div className="flex justify-between text-xs text-[#062f2e]/60 mt-1">
                         <span>Empty</span>
                         <span>Full</span>
@@ -366,7 +367,7 @@ const HouseholdRewards = () => {
               </Card>
             ))}
           </div>
-          
+
           {/* Bonus Points Explanation */}
           <div className="mt-6 p-4 bg-blue-50 rounded-lg border border-blue-200">
             <div className="flex items-start space-x-3">
@@ -382,9 +383,10 @@ const HouseholdRewards = () => {
                   Bonus Point System
                 </h4>
                 <p className="text-blue-700 text-sm leading-relaxed">
-                  Earn bonus points when recycling bins reach their collection threshold! 
-                  Help optimize collection routes by recycling when bins are nearly full. 
-                  Check the bin status above to see which bins qualify for bonus points.
+                  Earn bonus points when recycling bins reach their collection
+                  threshold! Help optimize collection routes by recycling when
+                  bins are nearly full. Check the bin status above to see which
+                  bins qualify for bonus points.
                 </p>
               </div>
             </div>

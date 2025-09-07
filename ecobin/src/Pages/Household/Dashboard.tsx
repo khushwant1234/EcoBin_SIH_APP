@@ -67,7 +67,9 @@ const HouseholdDashboard = () => {
     try {
       setLoading(true);
       setError(null);
-      const response = await fetch("http://localhost:5000/api/bin/fill-levels");
+      const response = await fetch(
+        "https://ecobin-sih-app.onrender.com/api/bin/fill-levels"
+      );
       const data = await response.json();
 
       if (data.success) {
@@ -88,7 +90,7 @@ const HouseholdDashboard = () => {
     try {
       setItemsLoading(true);
       const response = await fetch(
-        "http://localhost:5000/api/bin/items/latest"
+        "https://ecobin-sih-app.onrender.com/api/bin/items/latest"
       );
       const data = await response.json();
 
