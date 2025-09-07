@@ -1,4 +1,3 @@
-import React from "react";
 import { MapPin, Trash2, AlertTriangle } from "lucide-react";
 import mapImage from "../../../public/snu.jpg"; // Make sure image is imported correctly
 

@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { Card, CardContent, CardHeader, CardTitle } from "@/Components/ui/card";
 import { Button } from "@/Components/ui/button";
 import { Badge } from "@/Components/ui/badge";
+import { Progress } from "@/Components/ui/progress";
 
 const HouseholdRewards = () => {
   const navigate = useNavigate();
@@ -11,6 +12,54 @@ const HouseholdRewards = () => {
   const [redeemedRewards] = useState([
     { id: 1, name: "Coffee Shop Voucher", points: 500, date: "2024-01-15" },
     { id: 2, name: "Grocery Store Discount", points: 300, date: "2024-01-10" },
+  ]);
+
+  // Mock bin data with fill levels and corresponding rewards
+  const [binData] = useState([
+    {
+      id: 1,
+      type: "Plastic",
+      fillLevel: 75,
+      location: "Main Campus - Building A",
+      pointsPerItem: 10,
+      bonusThreshold: 80,
+      bonusPoints: 50,
+      icon: "♻️",
+      color: "bg-blue-500",
+    },
+    {
+      id: 2,
+      type: "Metal",
+      fillLevel: 45,
+      location: "Main Campus - Building B",
+      pointsPerItem: 15,
+      bonusThreshold: 70,
+      bonusPoints: 75,
+      icon: "🥤",
+      color: "bg-gray-500",
+    },
+    {
+      id: 3,
+      type: "Glass",
+      fillLevel: 90,
+      location: "Main Campus - Building C",
+      pointsPerItem: 20,
+      bonusThreshold: 85,
+      bonusPoints: 100,
+      icon: "🫙",
+      color: "bg-green-500",
+    },
+    {
+      id: 4,
+      type: "Paper",
+      fillLevel: 30,
+      location: "East Campus - Library",
+      pointsPerItem: 8,
+      bonusThreshold: 75,
+      bonusPoints: 40,
+      icon: "📄",
+      color: "bg-yellow-500",
+    },
   ]);
 
   const availableRewards = [
@@ -95,6 +144,139 @@ const HouseholdRewards = () => {
         </CardContent>
       </Card>
 
+      {/* Bin Fill Levels & Points */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-xl font-semibold text-[#062f2e]">
+            Recycle Bin Status & Rewards
+          </CardTitle>
+          <p className="text-[#062f2e]/70 text-sm">
+            Monitor bin fill levels and earn bonus points for helping with collection
+          </p>
+        </CardHeader>
+        <CardContent>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {binData.map((bin) => {
+              const isNearFull = bin.fillLevel >= bin.bonusThreshold;
+              
+              return (
+                <Card key={bin.id} className="border-2 hover:shadow-lg transition-shadow">
+                  <CardContent className="p-6">
+                    <div className="flex items-start justify-between mb-4">
+                      <div className="flex items-center space-x-3">
+                        <div className="text-3xl">{bin.icon}</div>
+                        <div>
+                          <h3 className="font-semibold text-[#062f2e]">
+                            {bin.type} Recycling
+                          </h3>
+                          <p className="text-sm text-[#062f2e]/70">
+                            {bin.location}
+                          </p>
+                        </div>
+                      </div>
+                      {isNearFull && (
+                        <Badge className="bg-orange-100 text-orange-800 hover:bg-orange-200">
+                          Bonus Available!
+                        </Badge>
+                      )}
+                    </div>
+
+                    {/* Fill Level Progress */}
+                    <div className="mb-4">
+                      <div className="flex justify-between items-center mb-2">
+                        <span className="text-sm font-medium text-[#062f2e]">
+                          Fill Level
+                        </span>
+                        <span className="text-sm font-bold text-[#062f2e]">
+                          {bin.fillLevel}%
+                        </span>
+                      </div>
+                      <Progress 
+                        value={bin.fillLevel} 
+                        className="h-3"
+                      />
+                      <div className="flex justify-between text-xs text-[#062f2e]/60 mt-1">
+                        <span>Empty</span>
+                        <span>Full</span>
+                      </div>
+                    </div>
+
+                    {/* Points Information */}
+                    <div className="space-y-3">
+                      <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                        <div className="flex items-center space-x-2">
+                          <svg
+                            className="w-4 h-4 text-yellow-500"
+                            fill="currentColor"
+                            viewBox="0 0 24 24"
+                          >
+                            <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
+                          </svg>
+                          <span className="text-sm font-medium text-[#062f2e]">
+                            Per Item Scanned
+                          </span>
+                        </div>
+                        <span className="font-bold text-green-600">
+                          +{bin.pointsPerItem} pts
+                        </span>
+                      </div>
+
+                      {isNearFull && (
+                        <div className="flex items-center justify-between p-3 bg-orange-50 rounded-lg border border-orange-200">
+                          <div className="flex items-center space-x-2">
+                            <svg
+                              className="w-4 h-4 text-orange-500"
+                              fill="currentColor"
+                              viewBox="0 0 24 24"
+                            >
+                              <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
+                            </svg>
+                            <span className="text-sm font-medium text-orange-800">
+                              Collection Bonus ({bin.bonusThreshold}%+ full)
+                            </span>
+                          </div>
+                          <span className="font-bold text-orange-600">
+                            +{bin.bonusPoints} pts
+                          </span>
+                        </div>
+                      )}
+
+                      <Button
+                        onClick={() => navigate("/household/map")}
+                        variant="outline"
+                        size="sm"
+                        className="w-full border-[#062f2e] text-[#062f2e] hover:bg-[#062f2e] hover:text-white"
+                      >
+                        <svg
+                          className="w-4 h-4 mr-2"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"
+                          />
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"
+                          />
+                        </svg>
+                        Find This Bin
+                      </Button>
+                    </div>
+                  </CardContent>
+                </Card>
+              );
+            })}
+          </div>
+        </CardContent>
+      </Card>
+
       {/* Available Rewards */}
       <div>
         <h2 className="text-xl font-semibold text-[#062f2e] mb-4">
@@ -168,7 +350,7 @@ const HouseholdRewards = () => {
               { action: "Scan Plastic Bottle", points: "10 pts", icon: "🍼" },
               { action: "Scan Aluminum Can", points: "15 pts", icon: "🥤" },
               { action: "Scan Glass Jar", points: "20 pts", icon: "🫙" },
-              { action: "Weekly Challenge", points: "50 pts", icon: "🏆" },
+              { action: "Full Bin Bonus", points: "40-100 pts", icon: "�" },
             ].map((item, index) => (
               <Card
                 key={index}
@@ -183,6 +365,29 @@ const HouseholdRewards = () => {
                 </CardContent>
               </Card>
             ))}
+          </div>
+          
+          {/* Bonus Points Explanation */}
+          <div className="mt-6 p-4 bg-blue-50 rounded-lg border border-blue-200">
+            <div className="flex items-start space-x-3">
+              <svg
+                className="w-5 h-5 text-blue-600 mt-0.5"
+                fill="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z" />
+              </svg>
+              <div>
+                <h4 className="font-semibold text-blue-800 mb-2">
+                  Bonus Point System
+                </h4>
+                <p className="text-blue-700 text-sm leading-relaxed">
+                  Earn bonus points when recycling bins reach their collection threshold! 
+                  Help optimize collection routes by recycling when bins are nearly full. 
+                  Check the bin status above to see which bins qualify for bonus points.
+                </p>
+              </div>
+            </div>
           </div>
         </CardContent>
       </Card>
