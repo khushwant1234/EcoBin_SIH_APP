@@ -1,0 +1,7 @@
+tensorflow
+keras
+torch
+torchvision
+scikit-learn
+opencv-python
+matplotlib
