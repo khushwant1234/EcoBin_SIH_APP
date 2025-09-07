@@ -3,11 +3,13 @@
 ## Login Endpoint
 
 ### Request
+
 **Method:** `POST`  
 **URL:** `/api/auth/login`  
 **Content-Type:** `application/json`
 
 **Payload:**
+
 ```json
 {
   "email": "john.doe@example.com",
@@ -16,7 +18,9 @@
 ```
 
 ### Response
+
 **Success Response:**
+
 ```json
 {
   "success": true,
@@ -24,7 +28,7 @@
     "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
     "user": {
       "id": "64f7a1b2c3d4e5f6a7b8c9d0",
-      "name": "John Doe", 
+      "name": "John Doe",
       "email": "john.doe@example.com",
       "role": "household",
       "isEmailVerified": true
@@ -34,6 +38,7 @@
 ```
 
 **Error Response:**
+
 ```json
 {
   "success": false,
@@ -44,22 +49,26 @@
 ## Registration Endpoint
 
 ### Request
+
 **Method:** `POST`  
 **URL:** `/api/auth/register`  
 **Content-Type:** `application/json`
 
 **Payload:**
+
 ```json
 {
   "name": "John Doe",
-  "email": "john.doe@example.com", 
+  "email": "john.doe@example.com",
   "password": "your_secure_password123",
   "role": "household"
 }
 ```
 
 ### Response
+
 **Success Response:**
+
 ```json
 {
   "success": true,
@@ -78,6 +87,7 @@
 ```
 
 **Error Response:**
+
 ```json
 {
   "success": false,

@@ -4,11 +4,16 @@ import { PostApiCall } from "../utils/apiCall";
 import { setItem } from "../utils/storage";
 import { useNavigate } from "react-router-dom";
 import Loading from "../Components/Loading";
-import type { RegistrationRequest, LoginRequest, RegistrationResponse, LoginResponse } from "../types/api";
+import type {
+  RegistrationRequest,
+  LoginRequest,
+  RegistrationResponse,
+  LoginResponse,
+} from "../types/api";
 
 const backendUrl = import.meta.env.VITE_BACKEND_URL || "http://localhost:5000";
 
-interface SignupForm extends Omit<RegistrationRequest, 'role'> {
+interface SignupForm extends Omit<RegistrationRequest, "role"> {
   role: "household" | "municipality" | "";
 }
 
@@ -49,7 +54,12 @@ const Auth = () => {
 
   const handleSignupSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!signupForm.name || !signupForm.email || !signupForm.role || !signupForm.password) {
+    if (
+      !signupForm.name ||
+      !signupForm.email ||
+      !signupForm.role ||
+      !signupForm.password
+    ) {
       toast.error("Please fill all fields");
       return;
     }
@@ -66,14 +76,14 @@ const Auth = () => {
         name: signupForm.name,
         email: signupForm.email,
         password: signupForm.password,
-        role: signupForm.role as "household" | "municipality"
+        role: signupForm.role as "household" | "municipality",
       };
 
-      const data = await PostApiCall(
+      const data = (await PostApiCall(
         `${backendUrl}/api/auth/register`,
         registrationData
-      ) as RegistrationResponse;
-      
+      )) as RegistrationResponse;
+
       if (data.success) {
         await setItem("token", data.data.token);
         toast.success(data.message || "Registration successful!");
@@ -98,10 +108,10 @@ const Auth = () => {
 
     setLoading(true);
     try {
-      const data = await PostApiCall(
-        `${backendUrl}/api/auth/login`, 
+      const data = (await PostApiCall(
+        `${backendUrl}/api/auth/login`,
         loginForm
-      ) as LoginResponse;
+      )) as LoginResponse;
 
       if (data.success) {
         await setItem("token", data.data.token);

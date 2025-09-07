@@ -1,11 +1,13 @@
 # EcoBin Authentication Setup
 
 ## Overview
+
 This project includes a complete authentication system with TypeScript support for both web applications and Chrome extensions.
 
 ## Features
 
 ### 🔐 Authentication Components
+
 - **Login/Signup Form**: Modern UI with role-based registration
 - **Token Management**: Secure storage with Chrome extension and localStorage fallback
 - **API Integration**: Complete API client with error handling
@@ -13,33 +15,38 @@ This project includes a complete authentication system with TypeScript support f
 ### 📝 Form Fields
 
 #### Registration
+
 - **Name**: User's full name
 - **Email**: User's email address (used for login)
-- **Role**: Either "household" or "municipality" 
+- **Role**: Either "household" or "municipality"
 - **Password**: Minimum 6 characters
 
 #### Login
+
 - **Email**: User's email address
 - **Password**: User's password
 
 ## API Endpoints
 
 ### Registration
+
 ```
 POST /api/auth/register
 ```
 
 **Payload:**
+
 ```json
 {
   "name": "John Doe",
-  "email": "john.doe@example.com", 
+  "email": "john.doe@example.com",
   "password": "your_secure_password123",
   "role": "household"
 }
 ```
 
 **Response:**
+
 ```json
 {
   "success": true,
@@ -58,11 +65,13 @@ POST /api/auth/register
 ```
 
 ### Login
+
 ```
 POST /api/auth/login
 ```
 
 **Payload:**
+
 ```json
 {
   "email": "john.doe@example.com",
@@ -71,6 +80,7 @@ POST /api/auth/login
 ```
 
 **Response:**
+
 ```json
 {
   "success": true,
@@ -122,15 +132,18 @@ VITE_BACKEND_URL=http://localhost:5000
 ## Usage
 
 ### Starting the Application
+
 ```bash
 npm run dev
 ```
 
 ### Navigation
+
 - **Home Page**: `/` - Shows authentication status
 - **Auth Page**: `/auth` - Login/Signup forms
 
 ### Testing Authentication
+
 1. Navigate to `/auth`
 2. Switch between Login/Signup tabs
 3. Fill in the required fields
@@ -140,12 +153,14 @@ npm run dev
 ## Components
 
 ### Auth Component (`/auth`)
+
 - Responsive design with tabbed interface
 - Form validation and error handling
 - Toast notifications for user feedback
 - Automatic redirect after successful authentication
 
 ### Home Component (`/`)
+
 - Authentication status display
 - Login/Logout buttons
 - Protected content when authenticated
@@ -153,6 +168,7 @@ npm run dev
 ## Storage Support
 
 The application supports both:
+
 - **Chrome Extension Storage**: For browser extension environments
 - **localStorage**: For regular web applications
 
