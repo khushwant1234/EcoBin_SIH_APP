@@ -6,6 +6,8 @@ import { Badge } from "@/Components/ui/badge";
 import { Progress } from "@/Components/ui/progress";
 import { Alert, AlertDescription } from "@/Components/ui/alert";
 import { Skeleton } from "@/Components/ui/skeleton";
+import { API_BASE_URL } from "../../config/constants";
+import { GetApiCall } from "../../utils/apiCall";
 
 interface BinData {
   fillPercentages: {
@@ -67,10 +69,13 @@ const HouseholdDashboard = () => {
     try {
       setLoading(true);
       setError(null);
-      const response = await fetch(
-        "https://ecobin-sih-app.onrender.com/api/bin/fill-levels"
+      console.log(
+        "Fetching bin fill levels from:",
+        `${API_BASE_URL}/bin/fill-levels`
       );
-      const data = await response.json();
+
+      const data = await GetApiCall(`${API_BASE_URL}/api/bin/fill-levels`);
+      console.log("Response data:", data);
 
       if (data.success) {
         setBinData(data.data);
@@ -89,10 +94,13 @@ const HouseholdDashboard = () => {
   const getLatestItems = async () => {
     try {
       setItemsLoading(true);
-      const response = await fetch(
-        "https://ecobin-sih-app.onrender.com/api/bin/items/latest"
+      console.log(
+        "Fetching latest items from:",
+        `${API_BASE_URL}/bin/items/latest`
       );
-      const data = await response.json();
+
+      const data = await GetApiCall(`${API_BASE_URL}/bin/items/latest`);
+      console.log("Latest items data:", data);
 
       if (data.success) {
         setLatestItems(data.data.items);
@@ -109,6 +117,30 @@ const HouseholdDashboard = () => {
   };
 
   useEffect(() => {
+    console.log("API_BASE_URL:", API_BASE_URL);
+    console.log(
+      "Environment VITE_BACKEND_URL:",
+      import.meta.env.VITE_BACKEND_URL
+    );
+
+    // Test API connectivity first
+    const testApiConnectivity = async () => {
+      try {
+        const healthResponse = await fetch(
+          `${API_BASE_URL.replace("/api", "")}/health`
+        );
+        console.log("Health check response:", healthResponse.status);
+        if (healthResponse.ok) {
+          console.log("API is reachable");
+        } else {
+          console.log("API health check failed");
+        }
+      } catch (error) {
+        console.error("API connectivity test failed:", error);
+      }
+    };
+
+    testApiConnectivity();
     getBinFillLevels();
     getLatestItems();
     // Refresh data every 30 seconds
